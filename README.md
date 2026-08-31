@@ -1,8 +1,6 @@
 # Task Board (SyncBoard)
 
-A role-based task management system with a Kanban workflow (To Do / Doing / Done),
-manager and employee roles, and task assignment. Built with React (Vite) on the
-front end and a Node.js/Express REST API on the back end.
+A role-based task management system with a Kanban workflow (**To Do → Doing → Done**), manager and employee roles, and task assignment. Built with React (Vite) on the front end and a Node.js/Express REST API on the back end.
 
 ## Project Structure
 
@@ -43,8 +41,7 @@ cd taskboard
 npm install
 npm run dev
 ```
-Runs on **http://localhost:5173** and calls the API at the URL set in `taskboard/.env`
-(`VITE_API_URL=http://localhost:5000/api`).
+Runs on **http://localhost:5173** and calls the API at the URL set in `taskboard/.env` (`VITE_API_URL=http://localhost:5000/api`).
 
 ### Test logins (seeded mock users)
 
@@ -71,11 +68,9 @@ Base URL: `/api`. All routes except `/auth/*` and `/health` require
 | PATCH | `/tasks/:id/move` | ✅ (assignee only) | Move a task, body `{ toStatus }` |
 | DELETE | `/tasks/:id` | ✅ | Delete a task |
 
-Full request/response examples: `server/TaskBoard.postman_collection.json`
-(import into Postman — set the `token` collection variable after calling Login).
+Full request/response examples: `server/TaskBoard.postman_collection.json` (import into Postman — set the `token` collection variable after calling Login).
 
 ## Known Limitations (M2)
 
-- Data lives in an in-memory array on the server (`server/src/data/`) — it resets
-  whenever the server restarts. This gets replaced with MongoDB + Mongoose in M3.
+- Data lives in an in-memory array on the server (`server/src/data/`) — it resets whenever the server restarts. This gets replaced with MongoDB + Mongoose in M3.
 - Auth uses a simple JWT signed with a shared secret; no password hashing yet.

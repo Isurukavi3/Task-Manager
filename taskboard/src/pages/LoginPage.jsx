@@ -6,22 +6,13 @@ function LoginPage({ onLogin, onNavigateToRegister }) {
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
 
-  const validUsers = [
-    { email: 'isuru@gmail.com', password: 'isuru1234' },
-    { email: 'nadith@gmail.com', password: 'nadith1234' },
-    { email: 'sahan@gmail.com', password: 'sahan1234' },
-    { email: 'manuja@gmail.com', password: 'manuja1234' }
-  ];
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    
-    const user = validUsers.find(u => u.email === email && u.password === password);
-    if (user) {
-      setError('');
-      onLogin(email);
-    } else {
-      setError('Invalid email or password');
+    setError('');
+    try {
+      await onLogin(email, password);
+    } catch (err) {
+      setError(err.message || 'Invalid email or password');
     }
   };
 

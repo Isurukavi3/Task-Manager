@@ -24,7 +24,7 @@ Task-Manager-dev/
 
 ## How to Run
 
-### 1. Backend
+### 1. Backend & Frontend
 
 ```bash
 cd server
@@ -34,13 +34,6 @@ npm run dev        # or: npm start
 ```
 Runs on **http://localhost:5000**. Health check: `GET /api/health`.
 
-### 2. Frontend
-
-```bash
-cd taskboard
-npm install
-npm run dev
-```
 Runs on **http://localhost:5173** and calls the API at the URL set in `taskboard/.env` (`VITE_API_URL=http://localhost:5000/api`).
 
 ### Test logins (seeded mock users)

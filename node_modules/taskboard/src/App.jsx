@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import MenuPage from './pages/MenuPage';
@@ -7,94 +7,105 @@ import DoingPage from './pages/DoingPage';
 import DonePage from './pages/DonePage';
 import ProfilePage from './pages/ProfilePage';
 import EmployeesPage from './pages/EmployeesPage';
+import * as authApi from './api/authApi';
+import * as usersApi from './api/usersApi';
+import * as tasksApi from './api/tasksApi';
 import './App.css';
+
+function groupTasksByStatus(flatTasks) {
+  return {
+    todo: flatTasks.filter((t) => t.status === 'todo'),
+    doing: flatTasks.filter((t) => t.status === 'doing'),
+    done: flatTasks.filter((t) => t.status === 'done'),
+  };
+}
 
 function App() {
   const [currentPage, setCurrentPage] = useState('login');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState(null);
-  const [users, setUsers] = useState([
-    { email: 'isuru@gmail.com', password: 'isuru1234', name: 'Isuru Kavisanka', jobTitle: 'Manager', role: 'manager', profilePicture: null },
-    { email: 'nadith@gmail.com', password: 'nadith1234', name: 'Nadith Dinsara', jobTitle: 'Software Developer', role: 'employee', profilePicture: null },
-    { email: 'sahan@gmail.com', password: 'sahan1234', name: 'Dumidu Sahan', jobTitle: 'UI/UX Designer', role: 'employee', profilePicture: null },
-    { email: 'manuja@gmail.com', password: 'manuja1234', name: 'Praveera Manuja', jobTitle: 'Backend Developer', role: 'employee', profilePicture: null }
-  ]);
-  const [tasks, setTasks] = useState({
-    todo: [],
-    doing: [],
-    done: []
-  });
+  const [employees, setEmployees] = useState([]);
+  const [tasks, setTasks] = useState({ todo: [], doing: [], done: [] });
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
 
-  const navigate = (page) => {
-    setCurrentPage(page);
-  };
+  const navigate = (page) => setCurrentPage(page);
 
-  const handleLogin = (email) => {
-    const user = users.find(u => u.email === email);
-    setCurrentUser(user);
-    setIsAuthenticated(true);
-    setCurrentPage('menu');
+  const refreshData = useCallback(async () => {
+    try {
+      const [flatTasks, employeeList] = await Promise.all([
+        tasksApi.getTasks(),
+        usersApi.getEmployees(),
+      ]);
+      setTasks(groupTasksByStatus(flatTasks));
+      setEmployees(employeeList);
+    } catch (err) {
+      setError(err.message);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isAuthenticated) refreshData();
+  }, [isAuthenticated, refreshData]);
+
+  const handleLogin = async (email, password) => {
+    setLoading(true);
+    setError('');
+    try {
+      const { token, user } = await authApi.login(email, password);
+      localStorage.setItem('token', token);
+      setCurrentUser(user);
+      setIsAuthenticated(true);
+      setCurrentPage('menu');
+    } catch (err) {
+      setError(err.message);
+      throw err; 
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleLogout = () => {
+    localStorage.removeItem('token');
     setIsAuthenticated(false);
     setCurrentUser(null);
     setCurrentPage('login');
   };
 
-  const handleRegister = (userData) => {
-    const newUser = {
-      ...userData,
-      role: 'employee',
-      profilePicture: null
-    };
-    setUsers([...users, newUser]);
+  const handleRegister = async (userData) => {
+    const { token, user } = await authApi.register(userData);
+    localStorage.setItem('token', token);
+    return user;
   };
 
-  const updateProfile = (profileData) => {
-    const updatedUser = { ...currentUser, ...profileData };
-    setCurrentUser(updatedUser);
-    setUsers(users.map(u => u.email === currentUser.email ? updatedUser : u));
+  const updateProfile = async (profileData) => {
+    const updated = await usersApi.updateUser(currentUser.email, profileData);
+    setCurrentUser(updated);
   };
 
-  const updateEmployee = (employeeEmail, profileData) => {
-    setUsers(users.map(u => u.email === employeeEmail ? { ...u, ...profileData } : u));
+  const updateEmployee = async (employeeEmail, profileData) => {
+    await usersApi.updateUser(employeeEmail, profileData);
+    refreshData();
   };
 
-  const addTask = (taskData) => {
-    const newTask = {
-      id: Date.now(),
-      ...taskData,
-      date: new Date().toISOString().split('T')[0]
-    };
-    setTasks({ ...tasks, todo: [...tasks.todo, newTask] });
+  const addTask = async (taskData) => {
+    await tasksApi.addTask(taskData);
+    refreshData();
   };
 
-  const deleteTask = (stage, taskId) => {
-    setTasks({
-      ...tasks,
-      [stage]: tasks[stage].filter(task => task.id !== taskId)
-    });
+  const deleteTask = async (id) => {
+    await tasksApi.deleteTask(id);
+    refreshData();
   };
 
-  const moveTask = (taskId, fromStage, toStage) => {
-    const task = tasks[fromStage].find(t => t.id === taskId);
-    if (task && task.assigneeEmail === currentUser.email) {
-      setTasks({
-        ...tasks,
-        [fromStage]: tasks[fromStage].filter(t => t.id !== taskId),
-        [toStage]: [...tasks[toStage], task]
-      });
-    }
-  };
-
-  const getEmployees = () => {
-    return users.filter(u => u.role === 'employee');
+  const moveTask = async (id, toStatus) => {
+    await tasksApi.moveTask(id, toStatus);
+    refreshData();
   };
 
   const renderPage = () => {
     if (!isAuthenticated && currentPage !== 'register') {
-      return <LoginPage onLogin={handleLogin} onNavigateToRegister={() => navigate('register')} />;
+      return <LoginPage onLogin={handleLogin} onNavigateToRegister={() => navigate('register')} error={error} />;
     }
 
     switch (currentPage) {
@@ -103,41 +114,41 @@ function App() {
       case 'menu':
         return <MenuPage onNavigate={navigate} currentUser={currentUser} />;
       case 'profile':
-        return <ProfilePage 
+        return <ProfilePage
           onNavigate={navigate}
           userProfile={currentUser}
           onUpdateProfile={updateProfile}
           onLogout={handleLogout}
         />;
       case 'employees':
-        return <EmployeesPage 
+        return <EmployeesPage
           onNavigate={navigate}
-          employees={getEmployees()}
+          employees={employees}
           onUpdateEmployee={updateEmployee}
         />;
       case 'todo':
-        return <TodoPage 
-          onNavigate={navigate} 
+        return <TodoPage
+          onNavigate={navigate}
           tasks={tasks.todo}
           onAddTask={addTask}
-          onDeleteTask={(id) => deleteTask('todo', id)}
-          onMoveTask={(id) => moveTask(id, 'todo', 'doing')}
+          onDeleteTask={deleteTask}
+          onMoveTask={(id) => moveTask(id, 'doing')}
           currentUser={currentUser}
-          employees={getEmployees()}
+          employees={employees}
         />;
       case 'doing':
-        return <DoingPage 
+        return <DoingPage
           onNavigate={navigate}
           tasks={tasks.doing}
-          onDeleteTask={(id) => deleteTask('doing', id)}
-          onMoveTask={(id) => moveTask(id, 'doing', 'done')}
+          onDeleteTask={deleteTask}
+          onMoveTask={(id) => moveTask(id, 'done')}
           currentUser={currentUser}
         />;
       case 'done':
-        return <DonePage 
+        return <DonePage
           onNavigate={navigate}
           tasks={tasks.done}
-          onDeleteTask={(id) => deleteTask('done', id)}
+          onDeleteTask={deleteTask}
           currentUser={currentUser}
         />;
       default:

@@ -9,19 +9,27 @@ function RegisterPage({ onNavigateToLogin, onRegister }) {
     password: '',
     confirmPassword: ''
   });
+  const [error, setError] = useState('');
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (formData.password === formData.confirmPassword) {
-      onRegister(formData);
+    setError('');
+
+    if (formData.password !== formData.confirmPassword) {
+      alert('Passwords do not match!');
+      return;
+    }
+
+    try {
+      await onRegister(formData);
       alert('Registration successful! You can now login.');
       onNavigateToLogin();
-    } else {
-      alert('Passwords do not match!');
+    } catch (err) {
+      setError(err.message || 'Registration failed');
     }
   };
 
@@ -86,6 +94,7 @@ function RegisterPage({ onNavigateToLogin, onRegister }) {
               required
             />
           </div>
+          {error && <p className="error-message">{error}</p>}
           <button type="submit" className="btn-primary">Register</button>
         </form>
         <p className="login-link">

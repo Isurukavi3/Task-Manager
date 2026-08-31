@@ -27,7 +27,6 @@ Task-Manager-dev/
 ### 1. Backend & Frontend
 
 ```bash
-cd server
 cp .env.example .env
 npm install
 npm run dev        # or: npm start

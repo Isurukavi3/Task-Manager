@@ -3,6 +3,7 @@ import cors from 'cors';
 import authRoutes from './routes/auth.routes.js';
 import usersRoutes from './routes/users.routes.js';
 import tasksRoutes from './routes/tasks.routes.js';
+import mongoose from 'mongoose';
 
 const app = express();
 
@@ -16,6 +17,8 @@ app.use(
     ],
   }),
 );
+
+
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -23,7 +26,12 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/health', (req, res) => res.json({ status: 'ok' }));
+app.get('/api/health', (req, res) => {
+  res.json({ 
+    status: 'ok',
+    mongo: mongoose.connection.readyState === 1 ? 'connected' : 'disconnected',
+  });
+});
 
 app.use('/api/auth', authRoutes);
 app.use('/api/users', usersRoutes);

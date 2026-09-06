@@ -1,28 +1,20 @@
-let users = [
-  { email: 'isuru@gmail.com', password: 'isuru1234', name: 'Isuru Kavisanka', jobTitle: 'Manager', role: 'manager', profilePicture: null },
-  { email: 'nadith@gmail.com', password: 'nadith1234', name: 'Nadith Dinsara', jobTitle: 'Software Developer', role: 'employee', profilePicture: null },
-  { email: 'sahan@gmail.com', password: 'sahan1234', name: 'Dumidu Sahan', jobTitle: 'UI/UX Designer', role: 'employee', profilePicture: null },
-  { email: 'manuja@gmail.com', password: 'manuja1234', name: 'Praveera Manuja', jobTitle: 'Backend Developer', role: 'employee', profilePicture: null },
-];
+import { User } from '../models/User.js';
 
-export function getAllUsers() {
-  return users;
+export async function getAllUsers() {
+  return User.find().lean();
 }
 
-export function findUserByEmail(email) {
-  return users.find((u) => u.email === email);
+export async function findUserByEmail(email) {
+  return User.findOne({ email }).lean();
 }
 
-export function addUser(newUser) {
-  users.push(newUser);
-  return newUser;
+export async function addUser(newUser) {
+  const created = await User.create(newUser);
+  return created.toObject();
 }
 
-export function updateUser(email, updates) {
-  const index = users.findIndex((u) => u.email === email);
-  if (index === -1) return null;
-  users[index] = { ...users[index], ...updates };
-  return users[index];
+export async function updateUser(email, updates) {
+  return User.findOneAndUpdate({ email }, updates, { new: true }).lean();
 }
 
 export default { getAllUsers, findUserByEmail, addUser, updateUser };

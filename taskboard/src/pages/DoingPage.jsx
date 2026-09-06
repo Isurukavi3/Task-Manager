@@ -1,7 +1,7 @@
 import TaskCard from '../components/TaskCard';
 import '../styles/TaskPage.css';
 
-function DoingPage({ onNavigate, tasks, onDeleteTask, onMoveTask, currentUser }) {
+function DoingPage({ onNavigate, tasks, onDeleteTask, onMoveTask, currentUser, onRefresh }) {
   return (
     <div className="task-page doing">
       <div className="task-page-header">
@@ -10,14 +10,15 @@ function DoingPage({ onNavigate, tasks, onDeleteTask, onMoveTask, currentUser })
       </div>
       <div className="task-grid">
         {tasks.map((task) => (
-          <TaskCard 
-            key={task.id} 
-            task={task} 
+          <TaskCard
+            key={task.id}
+            task={task}
             onDelete={onDeleteTask}
             onMove={onMoveTask}
             moveLabel="Move to Done"
             currentUser={currentUser}
             showMove={task.assigneeEmail === currentUser?.email}
+            onConflictResolved={onRefresh}
           />
         ))}
       </div>

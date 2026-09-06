@@ -3,7 +3,7 @@ import TaskCard from '../components/TaskCard';
 import TaskForm from '../components/TaskForm';
 import '../styles/TaskPage.css';
 
-function TodoPage({ onNavigate, tasks, onAddTask, onDeleteTask, onMoveTask, currentUser, employees }) {
+function TodoPage({ onNavigate, tasks, onAddTask, onDeleteTask, onMoveTask, currentUser, employees, onRefresh }) {
   const [showForm, setShowForm] = useState(false);
   const isManager = currentUser?.role === 'manager';
 
@@ -21,14 +21,15 @@ function TodoPage({ onNavigate, tasks, onAddTask, onDeleteTask, onMoveTask, curr
       </div>
       <div className="task-grid">
         {tasks.map((task) => (
-          <TaskCard 
-            key={task.id} 
-            task={task} 
+          <TaskCard
+            key={task.id}
+            task={task}
             onDelete={onDeleteTask}
             onMove={onMoveTask}
             moveLabel="Move to Doing"
             currentUser={currentUser}
             showMove={task.assigneeEmail === currentUser?.email}
+            onConflictResolved={onRefresh}
           />
         ))}
       </div>

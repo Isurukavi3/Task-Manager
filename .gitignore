@@ -1,0 +1,11 @@
+node_modules/
+server/node_modules/
+taskboard/node_modules/
+.env
+server/.env
+taskboard/.env
+dist/
+.DS_Store
+
+
+

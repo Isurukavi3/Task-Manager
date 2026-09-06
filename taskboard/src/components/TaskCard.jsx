@@ -1,6 +1,12 @@
 import '../styles/TaskCard.css';
+import { resolveConflict } from '../db/taskSync';
 
-function TaskCard({ task, onDelete, onMove, moveLabel, currentUser, showMove = false }) {
+function TaskCard({ task, onDelete, onMove, moveLabel, currentUser, showMove = false, onConflictResolved }) {
+  const handleAcceptServer = async () => {
+    await resolveConflict(task.id);
+    if (onConflictResolved) onConflictResolved();
+  };
+
   return (
     <div className="task-card">
       <div className="task-header">
@@ -18,6 +24,15 @@ function TaskCard({ task, onDelete, onMove, moveLabel, currentUser, showMove = f
         </span>
         <span className="task-date">{task.date}</span>
       </div>
+      {task.conflict && (
+        <div className="task-conflict">
+          <p>
+            ⚠ Someone else updated this task before your change to "{task.conflictStatus}" went through.
+            Showing the server's current version ({task.status}).
+          </p>
+          <button className="btn-move" onClick={handleAcceptServer}>Okay, got it</button>
+        </div>
+      )}
       {onMove && showMove && (
         <button className="btn-move" onClick={() => onMove(task.id)}>
           {moveLabel}

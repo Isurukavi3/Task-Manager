@@ -11,10 +11,10 @@ export function addTask(taskData) {
   });
 }
 
-export function moveTask(id, toStatus) {
+export function moveTask(id, toStatus, version) {
   return apiFetch(`/tasks/${id}/move`, {
     method: 'PATCH',
-    body: JSON.stringify({ toStatus }),
+    body: JSON.stringify({ toStatus, version }),
   });
 }
 

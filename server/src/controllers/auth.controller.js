@@ -14,14 +14,14 @@ function toSafeUser(user) {
   return safe;
 }
 
-export function login(req, res) {
+export async function login(req, res) {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required' });
   }
 
-  const user = findUserByEmail(email);
+  const user = await findUserByEmail(email);
 
   if (!user || user.password !== password) {
     return res.status(401).json({ message: 'Invalid email or password' });
@@ -31,18 +31,18 @@ export function login(req, res) {
   res.json({ token, user: toSafeUser(user) });
 }
 
-export function register(req, res) {
+export async function register(req, res) {
   const { name, email, jobTitle, password } = req.body;
 
   if (!name || !email || !jobTitle || !password) {
     return res.status(400).json({ message: 'name, email, jobTitle and password are required' });
   }
 
-  if (findUserByEmail(email)) {
+  if (await findUserByEmail(email)) {
     return res.status(409).json({ message: 'An account with this email already exists' });
   }
 
-  const newUser = addUser({
+  const newUser = await addUser({
     name,
     email,
     jobTitle,

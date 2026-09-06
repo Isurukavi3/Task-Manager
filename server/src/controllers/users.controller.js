@@ -5,9 +5,9 @@ function toSafeUser(user) {
   return safe;
 }
 
-export function getUsers(req, res) {
+export async function getUsers(req, res) {
   const { role } = req.query;
-  let users = getAllUsers();
+  let users = await getAllUsers();
 
   if (role) {
     users = users.filter((u) => u.role === role);
@@ -16,7 +16,7 @@ export function getUsers(req, res) {
   res.json(users.map(toSafeUser));
 }
 
-export function updateUser(req, res) {
+export async function updateUser(req, res) {
   const { email } = req.params;
   const isSelf = req.user.email === email;
   const isManager = req.user.role === 'manager';
@@ -25,7 +25,7 @@ export function updateUser(req, res) {
     return res.status(403).json({ message: 'Not allowed to edit this profile' });
   }
 
-  const updated = updateUserRecord(email, req.body);
+  const updated = await updateUserRecord(email, req.body);
 
   if (!updated) {
     return res.status(404).json({ message: 'User not found' });

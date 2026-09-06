@@ -1,9 +1,10 @@
 import { Router } from 'express';
-import { getTasks, createTask, moveTask, deleteTask } from '../controllers/tasks.controller.js';
+import { getTasks, createTask, moveTask, deleteTask, getTaskStats } from '../controllers/tasks.controller.js';
 import { verifyToken, requireManager } from '../middleware/auth.middleware.js';
 
 const router = Router();
 
+router.get('/stats', verifyToken, getTaskStats);
 router.get('/', verifyToken, getTasks);
 router.post('/', verifyToken, requireManager, createTask);
 router.patch('/:id/move', verifyToken, moveTask);

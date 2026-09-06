@@ -5,7 +5,7 @@ A role-based task management system with a Kanban workflow (**To Do → Doing �
 ## Project Structure
 
 ```
-Task-Manager-dev/
+Task-Manager/
 ├── taskboard/          # React front end (Vite)
 │   └── src/
 │       ├── api/        # fetch wrappers that call the backend

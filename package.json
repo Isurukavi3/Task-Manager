@@ -1,0 +1,16 @@
+{
+  "name": "task-manager",
+  "private": true,
+  "workspaces": [
+    "server",
+    "taskboard"
+  ],
+  "scripts": {
+    "dev": "concurrently \"npm run dev --workspace=server\" \"npm run dev --workspace=taskboard\"",
+    "dev:server": "npm run dev --workspace=server",
+    "dev:client": "npm run dev --workspace=taskboard"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

@@ -1,0 +1,135 @@
+.task-card {
+  background: white;
+  padding: 24px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.task-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+}
+
+.task-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 12px;
+}
+
+.task-header h3 {
+  color: #333;
+  font-size: 18px;
+  flex: 1;
+}
+
+.btn-delete {
+  background: #e74c3c;
+  color: white;
+  border: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  font-size: 20px;
+  cursor: pointer;
+  transition: background 0.3s;
+  line-height: 1;
+}
+
+.btn-delete:hover {
+  background: #c0392b;
+}
+
+.task-description {
+  color: #666;
+  font-size: 14px;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.task-assignee {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 16px;
+  padding: 8px 12px;
+  background: #f8f9fa;
+  border-radius: 6px;
+}
+
+.assignee-label {
+  color: #666;
+  font-size: 13px;
+  font-weight: 400;
+}
+
+.assignee-name {
+  color: #333;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.task-priority {
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.task-priority[data-priority="high"] {
+  background: #fee;
+  color: #e74c3c;
+}
+
+.task-priority[data-priority="medium"] {
+  background: #fef5e7;
+  color: #f39c12;
+}
+
+.task-priority[data-priority="low"] {
+  background: #eafaf1;
+  color: #27ae60;
+}
+
+.task-date {
+  color: #999;
+  font-size: 12px;
+}
+
+.btn-move {
+  width: 100%;
+  margin-top: 12px;
+  padding: 10px;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.btn-move:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
+}
+
+.move-disabled-message {
+  margin-top: 12px;
+  padding: 8px;
+  background: #f8f9fa;
+  color: #999;
+  font-size: 12px;
+  text-align: center;
+  border-radius: 4px;
+  font-style: italic;
+}

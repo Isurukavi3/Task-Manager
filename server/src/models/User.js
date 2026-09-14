@@ -20,7 +20,7 @@ const userSchema = new mongoose.Schema({
 
 userSchema.set('toJSON',{
     versionKey:false,
-    tranform(_doc, ret){
+    transform(_doc, ret){
         delete ret.password;
         ret.id = ret._id.toString();
         delete ret._id;

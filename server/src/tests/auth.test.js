@@ -1,7 +1,7 @@
 import request from 'supertest';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import app from '../src/app.js';
-import { User } from '../src/models/User.js';
+import app from '../app.js';
+import { User } from '../models/User.js';
 import { connectTestDb, clearTestDb, closeTestDb } from './setup/db.js';
 
 describe('Auth API', () => {

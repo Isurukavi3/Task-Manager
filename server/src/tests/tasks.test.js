@@ -1,8 +1,8 @@
 import request from 'supertest';
 import jwt from 'jsonwebtoken';
 import { describe, it, expect, beforeAll, afterAll, beforeEach } from '@jest/globals';
-import app from '../src/app.js';
-import { Task } from '../src/models/Task.js';
+import app from '../app.js';
+import { Task } from '../models/Task.js';
 import { connectTestDb, clearTestDb, closeTestDb } from './setup/db.js';
 
 function authHeader({ email = 'nimali@nsbm.lk', role = 'employee', name = 'Nimali' } = {}) {

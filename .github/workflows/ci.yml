@@ -1,0 +1,44 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  server:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm test --workspace=server -- --coverage
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: server-coverage
+          path: server/coverage/
+          if-no-files-found: ignore
+
+  client:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+      - run: npm ci
+      - run: npm run lint --workspace=taskboard
+        continue-on-error: true
+      - run: npm run test:coverage --workspace=taskboard
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: client-coverage
+          path: taskboard/coverage/
+          if-no-files-found: ignore

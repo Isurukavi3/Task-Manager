@@ -23,8 +23,9 @@ function LoginPage({ onLogin, onNavigateToRegister }) {
         <p className="login-subtitle">Software Company Task Management</p>
         <form onSubmit={handleSubmit}>
           <div className="form-group">
-            <label>Email</label>
+            <label htmlFor="login-email">Email</label>
             <input
+              id="login-email"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -33,8 +34,9 @@ function LoginPage({ onLogin, onNavigateToRegister }) {
             />
           </div>
           <div className="form-group">
-            <label>Password</label>
+            <label htmlFor="login-password">Password</label>
             <input
+              id="login-password"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
